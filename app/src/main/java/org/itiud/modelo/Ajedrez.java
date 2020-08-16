@@ -17,7 +17,7 @@ public class Ajedrez extends Observable {
 
         ArrayList<int[]> fichas = new ArrayList<>();
 
-        for (int i = 1; i < 7; i++) {
+        for (int i = 4; i < 5; i++) {
             this.matriz[6][i] = new Peon(new int[]{6, i}, Color.BLACK, this, 'P');
             fichas.add(new int[]{6, i, Color.BLACK, 'P'});
         }
@@ -42,8 +42,8 @@ public class Ajedrez extends Observable {
         this.matriz[7][4] = new Dama(new int[]{7, 4}, Color.BLACK, this, 'D');
         fichas.add(new int[]{7, 4, Color.BLACK, 'D'});
 
-        this.matriz[2][7] = new Peon(new int[]{2, 7}, Color.BLACK, this, 'P');
-        fichas.add(new int[]{2, 7, Color.BLACK, 'P'});
+        this.matriz[1][2] = new Peon(new int[]{1, 2}, Color.WHITE, this, 'P');
+        fichas.add(new int[]{1, 2, Color.WHITE, 'P'});
 
         ArrayList<Object> elemento = new ArrayList<Object>();
         elemento.add(fichas);
@@ -90,6 +90,17 @@ public class Ajedrez extends Observable {
             this.fichaActual = torre;
             ArrayList<Object> elemento = new ArrayList<Object>();
             elemento.add(torre.movimientos);
+            elemento.add(false);
+            elemento.add(true);
+            elemento.add(this.posicionesEnemigas());
+            this.setChanged();
+            this.notifyObservers(elemento);
+        } else if (ficha instanceof Alfil && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+            Alfil alfil = (Alfil) this.matriz[coordenadas[0]][coordenadas[1]];
+            alfil.posiblesMovimientos();
+            this.fichaActual = alfil;
+            ArrayList<Object> elemento = new ArrayList<Object>();
+            elemento.add(alfil.movimientos);
             elemento.add(false);
             elemento.add(true);
             elemento.add(this.posicionesEnemigas());
@@ -147,11 +158,37 @@ public class Ajedrez extends Observable {
                     this.setChanged();
                     this.notifyObservers(elemento);
                 }
-            } else if (this.fichaActual instanceof Torre) {
+            } else if (fichaActual instanceof Torre) {
+
                 int[] coordenadaAnterior = this.fichaActual.getCoordenadas();
 
                 // Si puede mover
                 if (((Torre) this.fichaActual).mover(coordenadas)) {
+                    ArrayList<Object> elemento = new ArrayList<Object>();
+                    elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
+                    elemento.add(false);
+                    elemento.add(true);
+                    elemento.add(coordenadaAnterior);
+                    elemento.add(this.posicionesEnemigas());
+                    this.setChanged();
+                    this.notifyObservers(elemento);
+                    this.fichaActual = null;
+
+                    // No puede mover y devuelve muestra mensaje
+                } else {
+                    ArrayList<Object> elemento = new ArrayList<Object>();
+                    elemento.add(this.fichaActual.getCoordenadas());
+                    elemento.add(false);
+                    elemento.add(true);
+                    elemento.add(false);
+                    this.setChanged();
+                    this.notifyObservers(elemento);
+                }
+            } else if (this.fichaActual instanceof Alfil) {
+                int[] coordenadaAnterior = this.fichaActual.getCoordenadas();
+
+                // Si puede mover
+                if (((Alfil) this.fichaActual).mover(coordenadas)) {
                     ArrayList<Object> elemento = new ArrayList<Object>();
                     elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
                     elemento.add(false);
