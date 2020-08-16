@@ -21,14 +21,10 @@ public class Peon extends Ficha {
 
     public void posiblesMovimientos() {
         if (!estado) {
-            System.out.println("");
-            System.out.println("ACa Estado False");
             this.movimientos.add(new int[]{this.coordenadas[0] - 1, this.coordenadas[1]});
             this.movimientos.add(new int[]{this.coordenadas[0] - 2, this.coordenadas[1]});
         } else {
             this.movimientos.clear();
-            System.out.println("");
-            System.out.println("ACa Estado True");
             movimientoNormal();
             movimientoDiagonal();
         }
@@ -36,21 +32,19 @@ public class Peon extends Ficha {
     }
 
     public void movimientoNormal() {
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1][this.coordenadas[1]] == null) {
-            System.out.println("Entro ACa subir 1");
-            this.movimientos.add(new int[]{this.coordenadas[0] - 1, this.coordenadas[1]});
+        int movimiento;
+        if (this.matriz.getMatriz()[movimiento = this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1]] == null) {
+            this.movimientos.add(new int[]{movimiento, this.coordenadas[1]});
         }
     }
 
     public void movimientoDiagonal() {
 
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1].color != this.color) { // diagonal izquierda
-            System.out.println("Entro ACa diagonal izq");
+        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1].color != this.color) { // diagonal izquierda
             this.movimientos.add(new int[]{this.coordenadas[0] - 1, this.coordenadas[1] - 1});
         }
 
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1].color != this.color) {
-            System.out.println("Entro ACa diagonal Der");
+        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1].color != this.color) {
             this.movimientos.add(new int[]{this.coordenadas[0] - 1, this.coordenadas[1] + 1});
         }
     }
@@ -58,47 +52,41 @@ public class Peon extends Ficha {
     public boolean mover(int[] coordenadas) {
         if (!estado) {
 
-            System.out.println("");
-            System.out.println("Actual: " + this.coordenadas[0]);
-            System.out.println("movida: " + coordenadas[0]);
-
             if (this.coordenadas[0] - coordenadas[0] == 1 && this.coordenadas[1] == coordenadas[1]) {
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
                 this.setCoordenadas(coordenadas);
                 this.estado = true;
                 this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
                 this.matriz.getMatriz()[coordenadas[0]+1][coordenadas[1]] = null;
-                System.out.println("");
-                System.out.println("Estado a cambiado a: " + this.estado);
                 return true;
             }else if(this.coordenadas[0] - coordenadas[0] == 2 && this.coordenadas[1] == coordenadas[1]){
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
                 this.setCoordenadas(coordenadas);
                 this.estado = true;
                 this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-                this.matriz.getMatriz()[coordenadas[0]+2][coordenadas[1]] = null;
-                System.out.println("");
-                System.out.println("Estado a cambiado a: " + this.estado);
                 return true;
             }
         }else{
 
-            if (this.coordenadas[0] - coordenadas[0] == 1 && this.coordenadas[1] == coordenadas[1]) {
+            int movimiento;
+            if (this.coordenadas[0] - coordenadas[0] == 1 && this.coordenadas[1] == coordenadas[1] && this.matriz.getMatriz()[movimiento = this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1]] == null) {
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
                 this.setCoordenadas(coordenadas);
                 this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-                this.matriz.getMatriz()[coordenadas[0]+1][coordenadas[1]] = null;
                 return true;
             }
 
-            if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1].color != this.color) {
+            if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1].color != this.color && this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] != null) { //diagonal derecha
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
                 this.setCoordenadas(coordenadas);
                 this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-                this.matriz.getMatriz()[coordenadas[0]+1][coordenadas[1]-1] = null;
                 return true;
             }
 
-            if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1].color != this.color) { // diagonal izquierda
+            if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1].color != this.color  && this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] != null) { // diagonal izquierda
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
                 this.setCoordenadas(coordenadas);
                 this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-                this.matriz.getMatriz()[coordenadas[0]+1][coordenadas[1]+1] = null;
                 return true;
             }
         }
