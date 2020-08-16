@@ -83,7 +83,9 @@ public class DibujoMatriz implements Observer {
 
 
             for (int[] b : borrar) {
+
                 if(!Arrays.equals(this.fichaMovida, b)){
+                    System.out.println("1");
                     textViewMatriz[b[0]][b[1]].setText("");
                 }
             }
