@@ -17,13 +17,18 @@ public class Ajedrez extends Observable {
 
         ArrayList<int[]> fichas = new ArrayList<>();
 
-        for (int i = 4; i < 5; i++) {
+        for (int i = 0; i < 8; i++) {
             this.matriz[6][i] = new Peon(new int[]{6, i}, Color.BLACK, this, 'P');
             fichas.add(new int[]{6, i, Color.BLACK, 'P'});
         }
 
-        this.matriz[4][4] = new Torre(new int[]{4, 4}, Color.BLACK, this, 'T');
-        fichas.add(new int[]{4, 4, Color.BLACK, 'T'});
+        for (int i = 0; i < 8; i++) {
+            this.matriz[1][i] = new Peon(new int[]{1, i}, Color.WHITE   , this, 'P');
+            fichas.add(new int[]{1, i, Color.WHITE, 'P'});
+        }
+
+        this.matriz[7][0] = new Torre(new int[]{7, 0}, Color.BLACK, this, 'T');
+        fichas.add(new int[]{7, 0, Color.BLACK, 'T'});
         this.matriz[7][7] = new Torre(new int[]{7, 7}, Color.BLACK, this, 'T');
         fichas.add(new int[]{7, 7, Color.BLACK, 'T'});
 
@@ -42,8 +47,28 @@ public class Ajedrez extends Observable {
         this.matriz[7][4] = new Dama(new int[]{7, 4}, Color.BLACK, this, 'D');
         fichas.add(new int[]{7, 4, Color.BLACK, 'D'});
 
-        this.matriz[1][2] = new Peon(new int[]{1, 2}, Color.WHITE, this, 'P');
-        fichas.add(new int[]{1, 2, Color.WHITE, 'P'});
+
+
+        this.matriz[0][0] = new Torre(new int[]{0, 0}, Color.WHITE, this, 'T');
+        fichas.add(new int[]{0, 0, Color.WHITE, 'T'});
+        this.matriz[0][7] = new Torre(new int[]{0, 7}, Color.WHITE, this, 'T');
+        fichas.add(new int[]{0, 7, Color.WHITE, 'T'});
+
+        this.matriz[0][1] = new Caballo(new int[]{0, 1}, Color.WHITE, this, 'C');
+        fichas.add(new int[]{0, 1, Color.WHITE, 'C'});
+        this.matriz[0][6] = new Caballo(new int[]{0, 6}, Color.WHITE, this, 'C');
+        fichas.add(new int[]{0, 6, Color.WHITE, 'C'});
+
+        this.matriz[0][2] = new Alfil(new int[]{0, 2}, Color.WHITE, this, 'A');
+        fichas.add(new int[]{0, 2, Color.WHITE, 'A'});
+        this.matriz[0][5] = new Alfil(new int[]{0, 5}, Color.WHITE, this, 'A');
+        fichas.add(new int[]{0, 5, Color.WHITE, 'A'});
+
+        this.matriz[0][3] = new Rey(new int[]{0, 3}, Color.WHITE, this, 'R');
+        fichas.add(new int[]{0, 3, Color.WHITE, 'R'});
+        this.matriz[0][4] = new Dama(new int[]{0, 4}, Color.WHITE, this, 'D');
+        fichas.add(new int[]{0, 4, Color.WHITE, 'D'});
+        
 
         ArrayList<Object> elemento = new ArrayList<Object>();
         elemento.add(fichas);
@@ -101,6 +126,28 @@ public class Ajedrez extends Observable {
             this.fichaActual = alfil;
             ArrayList<Object> elemento = new ArrayList<Object>();
             elemento.add(alfil.movimientos);
+            elemento.add(false);
+            elemento.add(true);
+            elemento.add(this.posicionesEnemigas());
+            this.setChanged();
+            this.notifyObservers(elemento);
+        } else if (ficha instanceof Rey && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+            Rey rey = (Rey) this.matriz[coordenadas[0]][coordenadas[1]];
+            rey.posiblesMovimientos();
+            this.fichaActual = rey;
+            ArrayList<Object> elemento = new ArrayList<Object>();
+            elemento.add(rey.movimientos);
+            elemento.add(false);
+            elemento.add(true);
+            elemento.add(this.posicionesEnemigas());
+            this.setChanged();
+            this.notifyObservers(elemento);
+        } else if (ficha instanceof Dama && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+            Dama dama = (Dama) this.matriz[coordenadas[0]][coordenadas[1]];
+            dama.posiblesMovimientos();
+            this.fichaActual = dama;
+            ArrayList<Object> elemento = new ArrayList<Object>();
+            elemento.add(dama.movimientos);
             elemento.add(false);
             elemento.add(true);
             elemento.add(this.posicionesEnemigas());
@@ -189,6 +236,58 @@ public class Ajedrez extends Observable {
 
                 // Si puede mover
                 if (((Alfil) this.fichaActual).mover(coordenadas)) {
+                    ArrayList<Object> elemento = new ArrayList<Object>();
+                    elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
+                    elemento.add(false);
+                    elemento.add(true);
+                    elemento.add(coordenadaAnterior);
+                    elemento.add(this.posicionesEnemigas());
+                    this.setChanged();
+                    this.notifyObservers(elemento);
+                    this.fichaActual = null;
+
+                    // No puede mover y devuelve muestra mensaje
+                } else {
+                    ArrayList<Object> elemento = new ArrayList<Object>();
+                    elemento.add(this.fichaActual.getCoordenadas());
+                    elemento.add(false);
+                    elemento.add(true);
+                    elemento.add(false);
+                    this.setChanged();
+                    this.notifyObservers(elemento);
+                }
+            } else if (fichaActual instanceof Rey) {
+
+                int[] coordenadaAnterior = this.fichaActual.getCoordenadas();
+
+                // Si puede mover
+                if (((Rey) this.fichaActual).mover(coordenadas)) {
+                    ArrayList<Object> elemento = new ArrayList<Object>();
+                    elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
+                    elemento.add(false);
+                    elemento.add(true);
+                    elemento.add(coordenadaAnterior);
+                    elemento.add(this.posicionesEnemigas());
+                    this.setChanged();
+                    this.notifyObservers(elemento);
+                    this.fichaActual = null;
+
+                    // No puede mover y devuelve muestra mensaje
+                } else {
+                    ArrayList<Object> elemento = new ArrayList<Object>();
+                    elemento.add(this.fichaActual.getCoordenadas());
+                    elemento.add(false);
+                    elemento.add(true);
+                    elemento.add(false);
+                    this.setChanged();
+                    this.notifyObservers(elemento);
+                }
+            } else if (fichaActual instanceof Dama) {
+
+                int[] coordenadaAnterior = this.fichaActual.getCoordenadas();
+
+                // Si puede mover
+                if (((Dama) this.fichaActual).mover(coordenadas)) {
                     ArrayList<Object> elemento = new ArrayList<Object>();
                     elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
                     elemento.add(false);

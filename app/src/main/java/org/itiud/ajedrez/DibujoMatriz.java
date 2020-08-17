@@ -102,6 +102,7 @@ public class DibujoMatriz implements Observer {
 
             for (int[] m : movimientos) {
                 textViewMatriz[m[0]][m[1]].setText("*");
+                textViewMatriz[m[0]][m[1]].setTextColor(Color.BLACK);
                 textViewMatriz[m[0]][m[1]].setGravity(Gravity.CENTER);
             }
 
@@ -111,6 +112,7 @@ public class DibujoMatriz implements Observer {
 
             for(int[] f: fichas){
                 textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
+                textViewMatriz[f[0]][f[1]].setGravity(Gravity.CENTER);
                 textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
             }
 
