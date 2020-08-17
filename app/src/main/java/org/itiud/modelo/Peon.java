@@ -1,6 +1,7 @@
 package org.itiud.modelo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Peon extends Ficha {
 
@@ -37,51 +38,36 @@ public class Peon extends Ficha {
 
     public void movimientoDiagonal() {
 
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1].color != this.color) { // diagonal izquierda
-            this.movimientos.add(new int[]{this.coordenadas[0] - 1, this.coordenadas[1] - 1});
+        int fila = this.coordenadas[0] - 1;
+        int col = this.coordenadas[1] - 1;
+        if (fila >= 0 && col >= 0) {
+            if (this.matriz.getMatriz()[fila][col] != null && this.matriz.getMatriz()[fila][col].color != this.color) { // diagonal izquierda
+                this.movimientos.add(new int[]{fila, col});
+            }
+        }
+        fila = this.coordenadas[0] - 1;
+        col = this.coordenadas[1] + 1;
+        if (fila >= 0 && col <= 7) {
+            if (this.matriz.getMatriz()[fila][col] != null && this.matriz.getMatriz()[fila][col].color != this.color) {
+                this.movimientos.add(new int[]{fila, col});
+            }
         }
 
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1].color != this.color) {
-            this.movimientos.add(new int[]{this.coordenadas[0] - 1, this.coordenadas[1] + 1});
-        }
+
     }
 
     public boolean mover(int[] coordenadas) {
 
-        int movimiento;
-        if (this.coordenadas[0] - coordenadas[0] == 1 && this.coordenadas[1] == coordenadas[1] && this.matriz.getMatriz()[movimiento = this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1]] == null) {
-            this.estado = true;
-            this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
-            this.setCoordenadas(coordenadas);
-            this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-            return true;
+        for (int[] m : this.movimientos) {
+            if (Arrays.equals(coordenadas, m)) {
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
+                this.setCoordenadas(coordenadas);
+                this.estado = true;
+                this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
+                return true;
+            }
         }
 
-        if (this.coordenadas[0] - coordenadas[0] == 2 && this.coordenadas[1] == coordenadas[1]) {
-            this.estado = true;
-            this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
-            this.setCoordenadas(coordenadas);
-            this.estado = true;
-            this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-            return true;
-        }
-
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] + 1 > 7 ? 7 : this.coordenadas[1] + 1].color != this.color && this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] != null) { //diagonal derecha
-            this.estado = true;
-            this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
-            this.setCoordenadas(coordenadas);
-            this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-            return true;
-        }
-
-        if (this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1] != null && this.matriz.getMatriz()[this.coordenadas[0] - 1 < 0 ? 0 : this.coordenadas[0] - 1][this.coordenadas[1] - 1 < 0 ? 0 : this.coordenadas[1] - 1].color != this.color && this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] != null) { // diagonal izquierda
-            this.estado = true;
-            this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
-            this.setCoordenadas(coordenadas);
-            this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-            return true;
-
-        }
         return false;
     }
 }
