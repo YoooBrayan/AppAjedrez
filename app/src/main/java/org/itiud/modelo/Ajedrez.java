@@ -9,10 +9,10 @@ public class Ajedrez extends Observable {
 
     private Ficha matriz[][];
     private Ficha fichaActual;
-    private boolean turno;
+    private int turno;
 
     public void iniciarJuego() {
-        this.turno = true;
+        this.turno = Color.WHITE;
         this.matriz = new Ficha[8][8];
 
         ArrayList<int[]> fichas = new ArrayList<>();
@@ -62,37 +62,37 @@ public class Ajedrez extends Observable {
         Ficha ficha = this.matriz[coordenadas[0]][coordenadas[1]];
         ArrayList<Object> elemento = new ArrayList<Object>();
 
-        if (ficha instanceof Peon && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+        if (ficha instanceof Peon && ficha.getColor() == turno) {
             Peon peon = (Peon) this.matriz[coordenadas[0]][coordenadas[1]];
-            peon.posiblesMovimientos();
+            peon.posiblesMovimientos(peon.getColor());
             this.fichaActual = peon;
             elemento.add(peon.movimientos);
 
-        } else if (ficha instanceof Caballo && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+        } else if (ficha instanceof Caballo &&  ficha.getColor() == turno) {
             Caballo caballo = (Caballo) this.matriz[coordenadas[0]][coordenadas[1]];
             caballo.posiblesMovimientos();
             this.fichaActual = caballo;
             elemento.add(caballo.movimientos);
 
-        } else if (ficha instanceof Torre && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+        } else if (ficha instanceof Torre && ficha.getColor() == turno) {
             Torre torre = (Torre) this.matriz[coordenadas[0]][coordenadas[1]];
             torre.posiblesMovimientos();
             this.fichaActual = torre;
             elemento.add(torre.movimientos);
 
-        } else if (ficha instanceof Alfil && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+        } else if (ficha instanceof Alfil && ficha.getColor() == turno) {
             Alfil alfil = (Alfil) this.matriz[coordenadas[0]][coordenadas[1]];
             alfil.posiblesMovimientos();
             this.fichaActual = alfil;
             elemento.add(alfil.movimientos);
 
-        } else if (ficha instanceof Rey && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+        } else if (ficha instanceof Rey && ficha.getColor() == turno) {
             Rey rey = (Rey) this.matriz[coordenadas[0]][coordenadas[1]];
             rey.posiblesMovimientos();
             this.fichaActual = rey;
             elemento.add(rey.movimientos);
 
-        } else if (ficha instanceof Dama && turno && !(ficha != null ? ficha.getColor() : "-1").equals(-1)) {
+        } else if (ficha instanceof Dama && ficha.getColor() == turno) {
             Dama dama = (Dama) this.matriz[coordenadas[0]][coordenadas[1]];
             dama.posiblesMovimientos();
             this.fichaActual = dama;
@@ -120,11 +120,12 @@ public class Ajedrez extends Observable {
 
             }
             if (b) {
+                turno = turno == Color.BLACK ? Color.WHITE : Color.BLACK;
                 elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
                 elemento.add(false);
                 elemento.add(true);
                 elemento.add(coordenadaAnterior);
-                elemento.add(this.posicionesEnemigas());
+                elemento.add(this.fichaActual == null ? new ArrayList<int[]>() : this.posicionesEnemigas());
                 this.setChanged();
                 this.notifyObservers(elemento);
                 this.fichaActual = null;
@@ -139,7 +140,8 @@ public class Ajedrez extends Observable {
         }
         elemento.add(false);
         elemento.add(true);
-        elemento.add(this.posicionesEnemigas());
+        elemento.add(this.fichaActual == null ? new ArrayList<int[]>() : this.posicionesEnemigas());
+        elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
         this.setChanged();
         this.notifyObservers(elemento);
     }
@@ -157,8 +159,8 @@ public class Ajedrez extends Observable {
         ArrayList<int[]> posiciones = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (this.matriz[i][j] != null && this.matriz[i][j].getColor() == -1) {
-                    posiciones.add(new int[]{i, j, Color.WHITE, this.matriz[i][j].getLetra()});
+                if (this.matriz[i][j] != null && this.matriz[i][j].getColor() == (this.fichaActual.getColor() == Color.BLACK ? Color.WHITE : Color.BLACK)) {
+                    posiciones.add(new int[]{i, j, this.fichaActual.getColor() == Color.BLACK ? Color.WHITE : Color.BLACK, this.matriz[i][j].getLetra()});
                 }
             }
         }

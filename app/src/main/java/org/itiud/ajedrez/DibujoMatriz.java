@@ -81,19 +81,17 @@ public class DibujoMatriz implements Observer {
         if (elemento.get(0) instanceof List && elemento.get(1).equals(false)) {
             ArrayList<int[]> movimientos = (ArrayList<int[]>) elemento.get(0);
 
-
             for (int[] b : borrar) {
 
-                if(!Arrays.equals(this.fichaMovida, b)){
-                    System.out.println("1");
+                if (!Arrays.equals(this.fichaMovida, b)) {
                     textViewMatriz[b[0]][b[1]].setText("");
                 }
             }
 
-
             ArrayList<int[]> posicionesE = (ArrayList<int[]>) elemento.get(3);
+            int color = (int) elemento.get(4);
 
-            for(int[] f: posicionesE){
+            for (int[] f : posicionesE) {
                 textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
                 textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
             }
@@ -102,6 +100,7 @@ public class DibujoMatriz implements Observer {
 
             for (int[] m : movimientos) {
                 textViewMatriz[m[0]][m[1]].setText("*");
+                textViewMatriz[m[0]][m[1]].setTextColor(color);
                 textViewMatriz[m[0]][m[1]].setGravity(Gravity.CENTER);
             }
 
@@ -109,16 +108,16 @@ public class DibujoMatriz implements Observer {
         } else if (elemento.get(0) != null && elemento.get(2).equals(false)) {
             ArrayList<int[]> fichas = (ArrayList<int[]>) elemento.get(0);
 
-            for(int[] f: fichas){
+            for (int[] f : fichas) {
                 textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
                 textViewMatriz[f[0]][f[1]].setGravity(Gravity.CENTER);
                 textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
             }
 
             // Realizar Movimiento
-        }else if(elemento.get(2).equals(true)){
+        } else if (elemento.get(2).equals(true)) {
 
-            if(elemento.get(3) instanceof int[]){
+            if (elemento.get(3) instanceof int[]) {
 
                 int[] ficha = (int[]) elemento.get(0);
                 int[] coordenadaAnterior = (int[]) elemento.get(3);
@@ -126,14 +125,16 @@ public class DibujoMatriz implements Observer {
                 this.fichaMovida = new int[]{ficha[0], ficha[1]};
 
                 for (int[] b : borrar) {
-                    if(!Arrays.equals(this.fichaMovida, b)){
+                    if (!Arrays.equals(this.fichaMovida, b)) {
                         textViewMatriz[b[0]][b[1]].setText("");
                     }
                 }
 
+
+                this.borrar.clear();
                 ArrayList<int[]> posicionesE = (ArrayList<int[]>) elemento.get(4);
 
-                for(int[] f: posicionesE){
+                for (int[] f : posicionesE) {
                     textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
                     textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
                 }
@@ -141,7 +142,7 @@ public class DibujoMatriz implements Observer {
                 textViewMatriz[ficha[0]][ficha[1]].setText(Character.toString((char) ficha[3]));
                 textViewMatriz[ficha[0]][ficha[1]].setTextColor(ficha[2]);
                 textViewMatriz[coordenadaAnterior[0]][coordenadaAnterior[1]].setText("");
-            }else{
+            } else {
                 Toast.makeText(this.mainActivity, "Movimiento Invalido", Toast.LENGTH_SHORT).show();
             }
 
