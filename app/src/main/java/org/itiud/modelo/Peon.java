@@ -31,7 +31,7 @@ public class Peon extends Ficha {
     public void movimientoNormal(int color) {
         int movimiento;
 
-        if (color == -1) {
+        if (color == Color.rgb(255,255,240)) {
             if (this.matriz.getMatriz()[movimiento = this.coordenadas[0] + 1 > 7 ? 7 : this.coordenadas[0] + 1][this.coordenadas[1]] == null) {
                 this.movimientos.add(new int[]{movimiento, this.coordenadas[1]});
                 if (!this.estado && this.matriz.getMatriz()[movimiento = this.coordenadas[0] + 2 > 7 ? 7 : this.coordenadas[0] + 2][this.coordenadas[1]] == null) {
@@ -50,7 +50,7 @@ public class Peon extends Ficha {
 
     public void movimientoDiagonal(int color) {
 
-        int fila = color == Color.WHITE ? this.coordenadas[0] + 1 : this.coordenadas[0] - 1;
+        int fila = color == Color.rgb(255,255,240) ? this.coordenadas[0] + 1 : this.coordenadas[0] - 1;
         int col = this.coordenadas[1] - 1;
         if (fila >= 0 && col >= 0 && fila <= 7) {
             if (this.matriz.getMatriz()[fila][col] != null && this.matriz.getMatriz()[fila][col].color != this.color) { // diagonal izquierda

@@ -8,17 +8,17 @@
 
     <LinearLayout
         android:id="@+id/linearLayoutAjedrez"
-        android:layout_width="377dp"
-        android:layout_height="656dp"
+        android:layout_width="336dp"
+        android:layout_height="540dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="86dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="86dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.055"
+        app:layout_constraintHorizontal_bias="0.393"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.025"></LinearLayout>
+        app:layout_constraintVertical_bias="0.0"></LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

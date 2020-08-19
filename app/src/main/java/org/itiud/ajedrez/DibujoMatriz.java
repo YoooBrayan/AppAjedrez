@@ -1,6 +1,7 @@
 package org.itiud.ajedrez;
 
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.graphics.Point;
 import android.view.Display;
 import android.view.Gravity;
@@ -45,16 +46,16 @@ public class DibujoMatriz implements Observer {
         int cont = 0;
         int filas = 1;
         int col = 97;
+
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.textViewMatriz[i][j] = new TextView(this.mainActivity);
                 this.textViewMatriz[i][j].setText(j == 0 ? (filas++) + "" : "");
-                this.textViewMatriz[i][j].setWidth((int) (width * 0.95 / 10));
-                this.textViewMatriz[i][j].setHeight((int) (height * 0.9 / 10));
+                this.textViewMatriz[i][j].setWidth((int) (width * 0.99 / 10));
+                this.textViewMatriz[i][j].setHeight((int) (height * 0.68 / 10));
                 this.textViewMatriz[i][j].setLayoutParams(params);
 
-
-                this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.GRAY : Color.GREEN);
+                this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.rgb(245,222,179) : Color.rgb(139,     69, 19));
 
                 this.gridLayoutMatriz.addView(this.textViewMatriz[i][j]);
                 cont++;
