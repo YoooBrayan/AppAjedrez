@@ -1,6 +1,10 @@
 package org.itiud.modelo;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
+
+import org.itiud.ajedrez.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Observable;
@@ -48,7 +52,7 @@ public class Ajedrez extends Observable {
         ArrayList<Object> elemento = new ArrayList<Object>();
         elemento.add(fichas);
         elemento.add(true);
-        elemento.add(false);
+        elemento.add(true);
         this.setChanged();
         this.notifyObservers(elemento);
     }
@@ -67,41 +71,49 @@ public class Ajedrez extends Observable {
             peon.posiblesMovimientos(peon.getColor());
             this.fichaActual = peon;
             elemento.add(peon.movimientos);
+            elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
         } else if (ficha instanceof Caballo &&  ficha.getColor() == turno) {
             Caballo caballo = (Caballo) this.matriz[coordenadas[0]][coordenadas[1]];
             caballo.posiblesMovimientos();
             this.fichaActual = caballo;
             elemento.add(caballo.movimientos);
+            elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
         } else if (ficha instanceof Torre && ficha.getColor() == turno) {
             Torre torre = (Torre) this.matriz[coordenadas[0]][coordenadas[1]];
             torre.posiblesMovimientos();
             this.fichaActual = torre;
             elemento.add(torre.movimientos);
+            elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
         } else if (ficha instanceof Alfil && ficha.getColor() == turno) {
             Alfil alfil = (Alfil) this.matriz[coordenadas[0]][coordenadas[1]];
             alfil.posiblesMovimientos();
             this.fichaActual = alfil;
             elemento.add(alfil.movimientos);
+            elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
         } else if (ficha instanceof Rey && ficha.getColor() == turno) {
             Rey rey = (Rey) this.matriz[coordenadas[0]][coordenadas[1]];
             rey.posiblesMovimientos();
             this.fichaActual = rey;
             elemento.add(rey.movimientos);
+            elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
         } else if (ficha instanceof Dama && ficha.getColor() == turno) {
             Dama dama = (Dama) this.matriz[coordenadas[0]][coordenadas[1]];
             dama.posiblesMovimientos();
             this.fichaActual = dama;
             elemento.add(dama.movimientos);
+            elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
         } else if (this.fichaActual instanceof Ficha) {
             boolean b = false;
             int[] coordenadaAnterior = this.fichaActual.getCoordenadas();
             if (this.fichaActual instanceof Peon && ((Peon) this.fichaActual).mover(coordenadas)) {
+                Peon peon = (Peon) this.matriz[this.fichaActual.getCoordenadas()[0]][this.fichaActual.getCoordenadas()[1]];
+                peon.posiblesMovimientos(peon.getColor());
                 b = true;
             } else if (fichaActual instanceof Caballo && ((Caballo) this.fichaActual).mover(coordenadas)) {
                 b = true;
@@ -122,26 +134,18 @@ public class Ajedrez extends Observable {
             if (b) {
                 turno = turno == Color.BLACK ? Color.rgb(255,255,240) : Color.BLACK;
                 elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
-                elemento.add(false);
-                elemento.add(true);
                 elemento.add(coordenadaAnterior);
-                elemento.add(this.fichaActual == null ? new ArrayList<int[]>() : this.posicionesEnemigas());
-                this.setChanged();
-                this.notifyObservers(elemento);
-                this.fichaActual = null;
+                elemento.add(this.fichaActual.getJaque());
+                this.fichaActual.setJaque(new int[]{-1, -1});
+                //this.fichaActual = null;
             } else {
                 elemento.add(this.fichaActual.getCoordenadas());
                 elemento.add(false);
-                elemento.add(true);
-                elemento.add(false);
-                this.setChanged();
-                this.notifyObservers(elemento);
             }
         }
         elemento.add(false);
         elemento.add(true);
         elemento.add(this.fichaActual == null ? new ArrayList<int[]>() : this.posicionesEnemigas());
-        elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
         this.setChanged();
         this.notifyObservers(elemento);
     }
@@ -165,5 +169,19 @@ public class Ajedrez extends Observable {
             }
         }
         return posiciones;
+    }
+
+    public void FinJuego(){
+
+        ArrayList<Object> elemento = new ArrayList<Object>();
+        elemento.add(true);
+        if(turno == Color.BLACK){
+            elemento.add(Color.BLACK);
+        }else{
+            elemento.add(Color.rgb(255,255,240));
+        }
+        elemento.add(false);
+        setChanged();
+        notifyObservers(elemento);
     }
 }

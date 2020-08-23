@@ -1,20 +1,23 @@
 package org.itiud.modelo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Ficha {
 
     protected int[] coordenadas = new int[2];
     protected int color;
-    protected ArrayList<int[]> movimientos= new ArrayList<>();
+    protected ArrayList<int[]> movimientos = new ArrayList<>();
     protected Ajedrez matriz;
     protected char letra;
+    protected int[] jaque;
 
     public Ficha(int[] coordenadas, int color, Ajedrez matriz, char letra) {
         this.coordenadas = coordenadas;
         this.color = color;
         this.matriz = matriz;
         this.letra = letra;
+        this.jaque = new int[]{-1, -1};
     }
 
     public int[] getCoordenadas() {
@@ -55,5 +58,30 @@ public class Ficha {
 
     public void setLetra(char letra) {
         this.letra = letra;
+    }
+
+    public boolean mover(int[] coordenadas) {
+
+        for (int[] m : this.movimientos) {
+            if (Arrays.equals(coordenadas, m)) {
+                if(this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] instanceof Rey) {
+                    this.matriz.FinJuego();
+                }
+                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
+                this.setCoordenadas(coordenadas);
+                this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int[] getJaque() {
+        return jaque;
+    }
+
+    public void setJaque(int[] jaque) {
+        this.jaque = jaque;
     }
 }

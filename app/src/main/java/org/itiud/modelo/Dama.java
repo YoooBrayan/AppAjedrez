@@ -36,8 +36,6 @@ public class Dama extends Torre{
             col--;
         }
 
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
     public void moverDiagonalDerechaArriba() {
@@ -57,9 +55,6 @@ public class Dama extends Torre{
             fila--;
             col++;
         }
-
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
     public void moverDiagonalDerechaAbajo() {
@@ -79,9 +74,6 @@ public class Dama extends Torre{
             fila++;
             col++;
         }
-
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
     public void moverDiagonalIzquierdaAbajo() {
@@ -102,8 +94,6 @@ public class Dama extends Torre{
             col--;
         }
 
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
 }

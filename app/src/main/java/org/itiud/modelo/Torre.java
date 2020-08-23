@@ -110,17 +110,4 @@ public class Torre extends Ficha {
         System.out.println("size: " + this.movimientos.size());
     }
 
-    public boolean mover(int[] coordenadas) {
-
-        for (int[] m : this.movimientos) {
-            if (Arrays.equals(coordenadas, m)) {
-                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
-                this.setCoordenadas(coordenadas);
-                this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

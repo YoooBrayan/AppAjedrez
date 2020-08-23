@@ -23,7 +23,7 @@ public class Peon extends Ficha {
     }
 
     public void posiblesMovimientos(int color) {
-        this.movimientos.clear();
+        //this.movimientos.clear();
         movimientoNormal(color);
         movimientoDiagonal(color);
     }
@@ -46,6 +46,7 @@ public class Peon extends Ficha {
                 }
             }
         }
+        this.estado = true;
     }
 
     public void movimientoDiagonal(int color) {
@@ -55,6 +56,10 @@ public class Peon extends Ficha {
         if (fila >= 0 && col >= 0 && fila <= 7) {
             if (this.matriz.getMatriz()[fila][col] != null && this.matriz.getMatriz()[fila][col].color != this.color) { // diagonal izquierda
                 this.movimientos.add(new int[]{fila, col});
+                if(this.matriz.getMatriz()[fila][col] instanceof Rey){
+                    this.jaque[0] = fila;
+                    this.jaque[1] = col;
+                }
             }
         }
 
@@ -62,24 +67,13 @@ public class Peon extends Ficha {
         if (fila >= 0 && col <= 7 && fila <= 7) {
             if (this.matriz.getMatriz()[fila][col] != null && this.matriz.getMatriz()[fila][col].color != this.color) {
                 this.movimientos.add(new int[]{fila, col});
+                if(this.matriz.getMatriz()[fila][col] instanceof Rey){
+                    this.jaque[0] = fila;
+                    this.jaque[1] = col;
+                }
             }
         }
-
-
+        this.estado = true;
     }
 
-    public boolean mover(int[] coordenadas) {
-
-        for (int[] m : this.movimientos) {
-            if (Arrays.equals(coordenadas, m)) {
-                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
-                this.setCoordenadas(coordenadas);
-                this.estado = true;
-                this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

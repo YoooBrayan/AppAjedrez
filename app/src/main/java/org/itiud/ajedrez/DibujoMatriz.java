@@ -1,8 +1,12 @@
 package org.itiud.ajedrez;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorSpace;
 import android.graphics.Point;
+import android.graphics.Typeface;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -26,6 +30,7 @@ public class DibujoMatriz implements Observer {
     private MainActivity mainActivity;
     private ArrayList<int[]> borrar = new ArrayList<>();
     private int[] fichaMovida = new int[2];
+    private int[] jaque = new int[]{-1, -1};
 
     public DibujoMatriz(final MainActivity mainActivity) {
         this.mainActivity = mainActivity;
@@ -55,7 +60,7 @@ public class DibujoMatriz implements Observer {
                 this.textViewMatriz[i][j].setHeight((int) (height * 0.68 / 10));
                 this.textViewMatriz[i][j].setLayoutParams(params);
 
-                this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.rgb(245,222,179) : Color.rgb(139,     69, 19));
+                this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.rgb(245, 222, 179) : Color.rgb(139, 69, 19));
 
                 this.gridLayoutMatriz.addView(this.textViewMatriz[i][j]);
                 cont++;
@@ -78,8 +83,18 @@ public class DibujoMatriz implements Observer {
 
         final ArrayList<Object> elemento = (ArrayList<Object>) arg;
 
-        //Posibles movimientos
-        if (elemento.get(0) instanceof List && elemento.get(1).equals(false)) {
+
+        //inicio
+        if (elemento.get(0) != null && elemento.get(2).equals(true)) {
+            ArrayList<int[]> fichas = (ArrayList<int[]>) elemento.get(0);
+
+            for (int[] f : fichas) {
+                textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
+                textViewMatriz[f[0]][f[1]].setGravity(Gravity.CENTER);
+                textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
+            }
+            // Posibles movimientos
+        } else if (elemento.get(0) instanceof List && elemento.get(2).equals(false)) {
             ArrayList<int[]> movimientos = (ArrayList<int[]>) elemento.get(0);
 
             for (int[] b : borrar) {
@@ -89,12 +104,16 @@ public class DibujoMatriz implements Observer {
                 }
             }
 
-            ArrayList<int[]> posicionesE = (ArrayList<int[]>) elemento.get(3);
-            int color = (int) elemento.get(4);
+            ArrayList<int[]> posicionesE = (ArrayList<int[]>) elemento.get(4);
+            int color = (int) elemento.get(1);
 
             for (int[] f : posicionesE) {
-                textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
-                textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
+                if (!Arrays.equals(new int[]{f[0], f[1]}, jaque)) {
+                    textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
+                    textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
+                } else {
+                    textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
+                }
             }
 
             this.borrar = movimientos;
@@ -105,23 +124,14 @@ public class DibujoMatriz implements Observer {
                 textViewMatriz[m[0]][m[1]].setGravity(Gravity.CENTER);
             }
 
-            // Inicio de juego
-        } else if (elemento.get(0) != null && elemento.get(2).equals(false)) {
-            ArrayList<int[]> fichas = (ArrayList<int[]>) elemento.get(0);
+            // Mover Ficha
+        } else if (elemento.get(0) instanceof int[]) {
 
-            for (int[] f : fichas) {
-                textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
-                textViewMatriz[f[0]][f[1]].setGravity(Gravity.CENTER);
-                textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
-            }
-
-            // Realizar Movimiento
-        } else if (elemento.get(2).equals(true)) {
-
-            if (elemento.get(3) instanceof int[]) {
+            if (elemento.get(1) instanceof int[]) {
 
                 int[] ficha = (int[]) elemento.get(0);
-                int[] coordenadaAnterior = (int[]) elemento.get(3);
+                int[] coordenadaAnterior = (int[]) elemento.get(1);
+                this.jaque = (int[]) elemento.get(2);
 
                 this.fichaMovida = new int[]{ficha[0], ficha[1]};
 
@@ -131,22 +141,37 @@ public class DibujoMatriz implements Observer {
                     }
                 }
 
-
                 this.borrar.clear();
-                ArrayList<int[]> posicionesE = (ArrayList<int[]>) elemento.get(4);
+                ArrayList<int[]> posicionesE = (ArrayList<int[]>) elemento.get(5);
 
                 for (int[] f : posicionesE) {
-                    textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
-                    textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
+                    if (!Arrays.equals(new int[]{f[0], f[1]}, jaque)) {
+                        textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
+                        textViewMatriz[f[0]][f[1]].setTextColor(f[2]);
+                    } else {
+                        textViewMatriz[f[0]][f[1]].setText(Character.toString((char) f[3]));
+                    }
                 }
 
                 textViewMatriz[ficha[0]][ficha[1]].setText(Character.toString((char) ficha[3]));
                 textViewMatriz[ficha[0]][ficha[1]].setTextColor(ficha[2]);
                 textViewMatriz[coordenadaAnterior[0]][coordenadaAnterior[1]].setText("");
+
+                if (!Arrays.equals(jaque, new int[]{-1, -1})) {
+                    System.out.println("Entro jaque");
+                    textViewMatriz[jaque[0]][jaque[1]].setTextColor(Color.RED);
+                }
             } else {
                 Toast.makeText(this.mainActivity, "Movimiento Invalido", Toast.LENGTH_SHORT).show();
             }
 
+        }else if(elemento.get(0).equals(true)){
+            Intent alert = new Intent(this.mainActivity, AlertActivity.class);
+            alert.putExtra("ganador", elemento.get(1).toString());
+            mainActivity.startActivity(alert);
+        }
+        else{
+            Toast.makeText(this.mainActivity, "Espera tu turno", Toast.LENGTH_SHORT).show();
         }
 
 
