@@ -25,7 +25,7 @@ public class Ajedrez extends Observable {
     private int turno;
     Database db = new Database();
     private int cont = 0;
-    boolean cupo = false;
+    private int colorJ;
 
     public void iniciarJuego(final String name) {
 
@@ -33,19 +33,21 @@ public class Ajedrez extends Observable {
         db.getReference().child("jugadores").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()){
+                if (!snapshot.exists()) {
                     Jugador jugador = new Jugador(name, "blanco");
                     db.getReference().child("jugadores").child("1").setValue(jugador);
-                    turno = Constantes.BLANCO;
+                    colorJ = Constantes.BLANCO;
+                    fichas();
 
-                }else{
+                } else {
                     db.getReference().child("jugadores").child("2").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if(!snapshot.exists()){
+                            if (!snapshot.exists()) {
                                 Jugador jugador = new Jugador(name, "negro");
                                 db.getReference().child("jugadores").child("2").setValue(jugador);
-                                turno = Constantes.NEGRO;
+                                colorJ = Constantes.NEGRO;
+                                fichas();
                             }
                         }
 
@@ -63,46 +65,6 @@ public class Ajedrez extends Observable {
             }
         });
 
-        this.turno = Constantes.BLANCO;
-        this.matriz = new Ficha[8][8];
-
-        ArrayList<int[]> fichas = new ArrayList<>();
-
-        for (int i = 0; i <= 7; i += 7) {
-            for (int j = 0; j < 8; j++) {
-                this.matriz[i == 0 ? i + 1 : i - 1][j] = new Peon(new int[]{i == 0 ? i + 1 : i - 1, j}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'P');
-                fichas.add(new int[]{i == 0 ? i + 1 : i - 1, j, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'P'});
-            }
-
-            this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'T');
-            fichas.add(new int[]{i, 0, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'T'});
-            this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'T');
-            fichas.add(new int[]{i, 7, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'T'});
-
-            this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'C');
-            fichas.add(new int[]{i, 1, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'C'});
-            this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'C');
-            fichas.add(new int[]{i, 6, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'C'});
-
-            this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'A');
-            fichas.add(new int[]{i, 2, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'A'});
-            this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'A');
-            fichas.add(new int[]{i, 5, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'A'});
-
-            this.matriz[i][3] = new Rey(new int[]{i, 3}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'R');
-            fichas.add(new int[]{i, 3, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'R'});
-            this.matriz[i][4] = new Dama(new int[]{i, 4}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'D');
-            fichas.add(new int[]{i, 4, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'D'});
-        }
-
-
-        ArrayList<Object> elemento = new ArrayList<Object>();
-        elemento.add(fichas);
-        elemento.add(true);
-        elemento.add(true);
-        this.setChanged();
-        this.notifyObservers(elemento);
-        actualizar();
     }
 
     public Ficha[][] getMatriz() {
@@ -116,7 +78,7 @@ public class Ajedrez extends Observable {
 
         if (ficha instanceof Peon && ficha.getColor() == turno) {
             Peon peon = (Peon) this.matriz[coordenadas[0]][coordenadas[1]];
-            peon.posiblesMovimientos(peon.getColor());
+            peon.posiblesMovimientos();
             this.fichaActual = peon;
             elemento.add(peon.movimientos);
             elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
@@ -161,7 +123,7 @@ public class Ajedrez extends Observable {
             int[] coordenadaAnterior = this.fichaActual.getCoordenadas();
             if (this.fichaActual instanceof Peon && ((Peon) this.fichaActual).mover(coordenadas)) {
                 Peon peon = (Peon) this.matriz[this.fichaActual.getCoordenadas()[0]][this.fichaActual.getCoordenadas()[1]];
-                peon.posiblesMovimientos(peon.getColor());
+                peon.posiblesMovimientos();
                 b = true;
             } else if (fichaActual instanceof Caballo && ((Caballo) this.fichaActual).mover(coordenadas)) {
                 b = true;
@@ -180,7 +142,7 @@ public class Ajedrez extends Observable {
 
             }
             if (b) {
-                turno = turno == Color.BLACK ? Color.rgb(255, 255, 240) : Color.BLACK;
+                turno = turno == Constantes.BLANCO ? Constantes.NEGRO : Constantes.BLANCO;
                 elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
                 elemento.add(coordenadaAnterior);
                 elemento.add(this.fichaActual.getJaque());
@@ -217,8 +179,8 @@ public class Ajedrez extends Observable {
         ArrayList<int[]> posiciones = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (this.matriz[i][j] != null && this.matriz[i][j].getColor() == (this.fichaActual.getColor() == Color.BLACK ? Color.rgb(255, 255, 240) : Color.BLACK)) {
-                    posiciones.add(new int[]{i, j, this.fichaActual.getColor() == Color.BLACK ? Color.rgb(255, 255, 240) : Color.BLACK, this.matriz[i][j].getLetra()});
+                if (this.matriz[i][j] != null && this.matriz[i][j].getColor() == (this.fichaActual.getColor() == Constantes.NEGRO ? Constantes.BLANCO : Constantes.NEGRO)) {
+                    posiciones.add(new int[]{i, j, this.fichaActual.getColor() == Constantes.NEGRO ? Constantes.BLANCO : Constantes.NEGRO, this.matriz[i][j].getLetra()});
                 }
             }
         }
@@ -229,10 +191,10 @@ public class Ajedrez extends Observable {
 
         ArrayList<Object> elemento = new ArrayList<Object>();
         elemento.add(true);
-        if (turno == Color.BLACK) {
-            elemento.add(Color.BLACK);
+        if (turno == Constantes.NEGRO) {
+            elemento.add(Constantes.NEGRO);
         } else {
-            elemento.add(Color.rgb(255, 255, 240));
+            elemento.add(Constantes.BLANCO);
         }
         elemento.add(false);
         setChanged();
@@ -247,7 +209,7 @@ public class Ajedrez extends Observable {
             public void run() {
 
                 cont++;
-                if(cont>1){
+                if (cont > 1) {
                     timer.cancel();
                     timer.purge();
                     System.out.println("");
@@ -275,6 +237,52 @@ public class Ajedrez extends Observable {
         };
         timer.scheduleAtFixedRate(timerTask, 0, 1000);
 
+    }
+
+    public void fichas() {
+        this.turno = Constantes.BLANCO;
+        this.matriz = new Ficha[8][8];
+
+        ArrayList<int[]> fichas = new ArrayList<>();
+
+        int colorE = colorJ == Constantes.BLANCO ? Constantes.NEGRO : Constantes.BLANCO;
+
+        for (int i = 0; i <= 7; i += 7) {
+
+            for (int j = 0; j < 8; j++) {
+                this.matriz[i == 0 ? i + 1 : i - 1][j] = new Peon(new int[]{i == 0 ? i + 1 : i - 1, j}, i == 0 ? colorE : colorJ, this, 'P', i == 0 ? 0 : 1);
+                fichas.add(new int[]{i == 0 ? i + 1 : i - 1, j, i == 0 ? colorE : colorJ, 'P'});
+            }
+
+            this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 0 ? colorE : colorJ, this, 'T');
+            fichas.add(new int[]{i, 0, i == 0 ? colorE : colorJ, 'T'});
+            this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 0 ? colorE : colorJ, this, 'T');
+            fichas.add(new int[]{i, 7, i == 0 ? colorE : colorJ, 'T'});
+
+            this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 0 ? colorE : colorJ, this, 'C');
+            fichas.add(new int[]{i, 1, i == 0 ? colorE : colorJ, 'C'});
+            this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 0 ? colorE : colorJ, this, 'C');
+            fichas.add(new int[]{i, 6, i == 0 ? colorE : colorJ, 'C'});
+
+            this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 0 ? colorE : colorJ, this, 'A');
+            fichas.add(new int[]{i, 2, i == 0 ? colorE : colorJ, 'A'});
+            this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 0 ? colorE : colorJ, this, 'A');
+            fichas.add(new int[]{i, 5, i == 0 ? colorE : colorJ, 'A'});
+
+            this.matriz[i][3] = new Rey(new int[]{i, 3}, i == 0 ? colorE : colorJ, this, 'R');
+            fichas.add(new int[]{i, 3, i == 0 ? colorE : colorJ, 'R'});
+            this.matriz[i][4] = new Dama(new int[]{i, 4}, i == 0 ? colorE : colorJ, this, 'D');
+            fichas.add(new int[]{i, 4, i == 0 ? colorE : colorJ, 'D'});
+        }
+
+
+        ArrayList<Object> elemento = new ArrayList<Object>();
+        elemento.add(fichas);
+        elemento.add(true);
+        elemento.add(true);
+        this.setChanged();
+        this.notifyObservers(elemento);
+        actualizar();
     }
 
 

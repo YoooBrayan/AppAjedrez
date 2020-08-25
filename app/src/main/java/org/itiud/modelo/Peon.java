@@ -2,16 +2,20 @@ package org.itiud.modelo;
 
 import android.graphics.Color;
 
+import org.itiud.util.Constantes;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Peon extends Ficha {
 
     private boolean estado;
+    private int posicion;
 
-    public Peon(int[] coordenadas, int color, Ajedrez matriz, char letra) {
+    public Peon(int[] coordenadas, int color, Ajedrez matriz, char letra, int posicion) {
         super(coordenadas, color, matriz, letra);
         this.estado = false;
+        this.posicion = posicion;
     }
 
     public boolean getEstado() {
@@ -22,16 +26,16 @@ public class Peon extends Ficha {
         this.estado = estado;
     }
 
-    public void posiblesMovimientos(int color) {
+    public void posiblesMovimientos() {
         //this.movimientos.clear();
-        movimientoNormal(color);
-        movimientoDiagonal(color);
+        movimientoNormal();
+        movimientoDiagonal();
     }
 
-    public void movimientoNormal(int color) {
+    public void movimientoNormal() {
         int movimiento;
 
-        if (color == Color.rgb(255,255,240)) {
+        if (this.posicion == 0) {
             if (this.matriz.getMatriz()[movimiento = this.coordenadas[0] + 1 > 7 ? 7 : this.coordenadas[0] + 1][this.coordenadas[1]] == null) {
                 this.movimientos.add(new int[]{movimiento, this.coordenadas[1]});
                 if (!this.estado && this.matriz.getMatriz()[movimiento = this.coordenadas[0] + 2 > 7 ? 7 : this.coordenadas[0] + 2][this.coordenadas[1]] == null) {
@@ -49,9 +53,9 @@ public class Peon extends Ficha {
         this.estado = true;
     }
 
-    public void movimientoDiagonal(int color) {
+    public void movimientoDiagonal() {
 
-        int fila = color == Color.rgb(255,255,240) ? this.coordenadas[0] + 1 : this.coordenadas[0] - 1;
+        int fila = this.posicion == 0 ? this.coordenadas[0] + 1 : this.coordenadas[0] - 1;
         int col = this.coordenadas[1] - 1;
         if (fila >= 0 && col >= 0 && fila <= 7) {
             if (this.matriz.getMatriz()[fila][col] != null && this.matriz.getMatriz()[fila][col].color != this.color) { // diagonal izquierda
@@ -76,4 +80,11 @@ public class Peon extends Ficha {
         this.estado = true;
     }
 
+    public int getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(int posicion) {
+        this.posicion = posicion;
+    }
 }
