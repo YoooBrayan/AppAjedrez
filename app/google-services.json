@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "552347794753",
+    "firebase_url": "https://appajedrez-34d15.firebaseio.com",
+    "project_id": "appajedrez-34d15",
+    "storage_bucket": "appajedrez-34d15.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:552347794753:android:44c6993a7974ed840bf5c0",
+        "android_client_info": {
+          "package_name": "org.itiud.ajedrez"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "552347794753-5k7a28pba6i9drgmk1f5iu5dqc1dmirf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUzh1HJyIfag1RpjPC1NQe_9hjliOH06o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "552347794753-5k7a28pba6i9drgmk1f5iu5dqc1dmirf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

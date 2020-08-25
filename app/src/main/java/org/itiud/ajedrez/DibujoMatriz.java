@@ -55,7 +55,7 @@ public class DibujoMatriz implements Observer {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.textViewMatriz[i][j] = new TextView(this.mainActivity);
-                this.textViewMatriz[i][j].setText(j == 0 ? (filas++) + "" : "");
+                //this.textViewMatriz[i][j].setText(j == 0 ? (filas++) + "" : "");
                 this.textViewMatriz[i][j].setWidth((int) (width * 0.99 / 10));
                 this.textViewMatriz[i][j].setHeight((int) (height * 0.68 / 10));
                 this.textViewMatriz[i][j].setLayoutParams(params);
@@ -65,7 +65,7 @@ public class DibujoMatriz implements Observer {
                 this.gridLayoutMatriz.addView(this.textViewMatriz[i][j]);
                 cont++;
                 if (i == 7) {
-                    this.textViewMatriz[7][j].setText(this.textViewMatriz[7][j].getText() + Character.toString((char) col++));
+                    //this.textViewMatriz[7][j].setText(this.textViewMatriz[7][j].getText() + Character.toString((char) col++));
                 }
             }
             cont--;
@@ -169,6 +169,8 @@ public class DibujoMatriz implements Observer {
             Intent alert = new Intent(this.mainActivity, AlertActivity.class);
             alert.putExtra("ganador", elemento.get(1).toString());
             mainActivity.startActivity(alert);
+        }else if(elemento.get(0).equals(false)){
+
         }
         else{
             Toast.makeText(this.mainActivity, "Espera tu turno", Toast.LENGTH_SHORT).show();

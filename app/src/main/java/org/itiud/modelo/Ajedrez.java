@@ -4,48 +4,95 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import org.itiud.ajedrez.MainActivity;
+import org.itiud.util.Constantes;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Ajedrez extends Observable {
 
     private Ficha matriz[][];
     private Ficha fichaActual;
     private int turno;
+    Database db = new Database();
+    private int cont = 0;
+    boolean cupo = false;
 
-    public void iniciarJuego() {
-        this.turno = Color.rgb(255,255,240);
+    public void iniciarJuego(final String name) {
+
+
+        db.getReference().child("jugadores").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.exists()){
+                    Jugador jugador = new Jugador(name, "blanco");
+                    db.getReference().child("jugadores").child("1").setValue(jugador);
+                    turno = Constantes.BLANCO;
+
+                }else{
+                    db.getReference().child("jugadores").child("2").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(!snapshot.exists()){
+                                Jugador jugador = new Jugador(name, "negro");
+                                db.getReference().child("jugadores").child("2").setValue(jugador);
+                                turno = Constantes.NEGRO;
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        this.turno = Constantes.BLANCO;
         this.matriz = new Ficha[8][8];
 
         ArrayList<int[]> fichas = new ArrayList<>();
 
         for (int i = 0; i <= 7; i += 7) {
             for (int j = 0; j < 8; j++) {
-                this.matriz[i == 0 ? i + 1 : i - 1][j] = new Peon(new int[]{i == 0 ? i + 1 : i - 1, j}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'P');
-                fichas.add(new int[]{i == 0 ? i + 1 : i - 1, j, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'P'});
+                this.matriz[i == 0 ? i + 1 : i - 1][j] = new Peon(new int[]{i == 0 ? i + 1 : i - 1, j}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'P');
+                fichas.add(new int[]{i == 0 ? i + 1 : i - 1, j, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'P'});
             }
 
-            this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'T');
-            fichas.add(new int[]{i, 0, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'T'});
-            this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'T');
-            fichas.add(new int[]{i, 7, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'T'});
+            this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'T');
+            fichas.add(new int[]{i, 0, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'T'});
+            this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'T');
+            fichas.add(new int[]{i, 7, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'T'});
 
-            this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'C');
-            fichas.add(new int[]{i, 1, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'C'});
-            this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'C');
-            fichas.add(new int[]{i, 6, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'C'});
+            this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'C');
+            fichas.add(new int[]{i, 1, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'C'});
+            this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'C');
+            fichas.add(new int[]{i, 6, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'C'});
 
-            this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'A');
-            fichas.add(new int[]{i, 2, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'A'});
-            this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'A');
-            fichas.add(new int[]{i, 5, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'A'});
+            this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'A');
+            fichas.add(new int[]{i, 2, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'A'});
+            this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'A');
+            fichas.add(new int[]{i, 5, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'A'});
 
-            this.matriz[i][3] = new Rey(new int[]{i, 3}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'R');
-            fichas.add(new int[]{i, 3, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'R'});
-            this.matriz[i][4] = new Dama(new int[]{i, 4}, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, this, 'D');
-            fichas.add(new int[]{i, 4, i == 0 ? Color.rgb(255,255,240) : Color.BLACK, 'D'});
+            this.matriz[i][3] = new Rey(new int[]{i, 3}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'R');
+            fichas.add(new int[]{i, 3, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'R'});
+            this.matriz[i][4] = new Dama(new int[]{i, 4}, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, this, 'D');
+            fichas.add(new int[]{i, 4, i == 0 ? Color.rgb(255, 255, 240) : Color.BLACK, 'D'});
         }
 
 
@@ -55,6 +102,7 @@ public class Ajedrez extends Observable {
         elemento.add(true);
         this.setChanged();
         this.notifyObservers(elemento);
+        actualizar();
     }
 
     public Ficha[][] getMatriz() {
@@ -73,7 +121,7 @@ public class Ajedrez extends Observable {
             elemento.add(peon.movimientos);
             elemento.add(this.fichaActual != null ? this.fichaActual.getColor() : 0);
 
-        } else if (ficha instanceof Caballo &&  ficha.getColor() == turno) {
+        } else if (ficha instanceof Caballo && ficha.getColor() == turno) {
             Caballo caballo = (Caballo) this.matriz[coordenadas[0]][coordenadas[1]];
             caballo.posiblesMovimientos();
             this.fichaActual = caballo;
@@ -132,12 +180,18 @@ public class Ajedrez extends Observable {
 
             }
             if (b) {
-                turno = turno == Color.BLACK ? Color.rgb(255,255,240) : Color.BLACK;
+                turno = turno == Color.BLACK ? Color.rgb(255, 255, 240) : Color.BLACK;
                 elemento.add(new int[]{this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), this.fichaActual.getLetra()});
                 elemento.add(coordenadaAnterior);
                 elemento.add(this.fichaActual.getJaque());
                 this.fichaActual.setJaque(new int[]{-1, -1});
+                //Enviar a firebase aqui
                 //this.fichaActual = null;
+
+                Coordenada coordenada = new Coordenada(this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1]);
+                db.getReference().child("partida").removeValue();
+                db.getReference().child("partida").setValue(coordenada);
+
             } else {
                 elemento.add(this.fichaActual.getCoordenadas());
                 elemento.add(false);
@@ -163,25 +217,65 @@ public class Ajedrez extends Observable {
         ArrayList<int[]> posiciones = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (this.matriz[i][j] != null && this.matriz[i][j].getColor() == (this.fichaActual.getColor() == Color.BLACK ? Color.rgb(255,255,240) : Color.BLACK)) {
-                    posiciones.add(new int[]{i, j, this.fichaActual.getColor() == Color.BLACK ? Color.rgb(255,255,240) : Color.BLACK, this.matriz[i][j].getLetra()});
+                if (this.matriz[i][j] != null && this.matriz[i][j].getColor() == (this.fichaActual.getColor() == Color.BLACK ? Color.rgb(255, 255, 240) : Color.BLACK)) {
+                    posiciones.add(new int[]{i, j, this.fichaActual.getColor() == Color.BLACK ? Color.rgb(255, 255, 240) : Color.BLACK, this.matriz[i][j].getLetra()});
                 }
             }
         }
         return posiciones;
     }
 
-    public void FinJuego(){
+    public void FinJuego() {
 
         ArrayList<Object> elemento = new ArrayList<Object>();
         elemento.add(true);
-        if(turno == Color.BLACK){
+        if (turno == Color.BLACK) {
             elemento.add(Color.BLACK);
-        }else{
-            elemento.add(Color.rgb(255,255,240));
+        } else {
+            elemento.add(Color.rgb(255, 255, 240));
         }
         elemento.add(false);
         setChanged();
         notifyObservers(elemento);
     }
+
+    public void actualizar() {
+
+        final Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                cont++;
+                if(cont>1){
+                    timer.cancel();
+                    timer.purge();
+                    System.out.println("");
+                    System.out.println("Cancelo");
+                    return;
+                }
+                db.getReference().child("partida").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            int fila = Integer.parseInt(snapshot.child("fila").getValue().toString());
+                            int columna = Integer.parseInt(snapshot.child("columna").getValue().toString());
+                            System.out.println("Fila: " + fila);
+                            System.out.println("Columna: " + columna);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 1000);
+
+    }
+
+
 }

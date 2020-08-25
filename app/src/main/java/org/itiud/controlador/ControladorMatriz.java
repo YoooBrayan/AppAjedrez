@@ -11,7 +11,7 @@ public class ControladorMatriz {
     private final MainActivity mainActivityC;
     private Ajedrez ajedrez;
 
-    public ControladorMatriz(MainActivity mainActivity){
+    public ControladorMatriz(MainActivity mainActivity, String name){
 
         this.mainActivityC = mainActivity;
 
@@ -34,7 +34,7 @@ public class ControladorMatriz {
 
         this.ajedrez = new Ajedrez();
         this.ajedrez.addObserver(this.mainActivityC.getDibujoMatriz());
-        this.ajedrez.iniciarJuego();
+        this.ajedrez.iniciarJuego(name);
     }
 
     private void evento(int f, int c){
