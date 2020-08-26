@@ -37,7 +37,7 @@ public class Ajedrez extends Observable {
                     Jugador jugador = new Jugador(name, "blanco");
                     db.getReference().child("jugadores").child("1").setValue(jugador);
                     colorJ = Constantes.BLANCO;
-                    fichas();
+                    fichas(0);
 
                 } else {
                     db.getReference().child("jugadores").child("2").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -47,7 +47,7 @@ public class Ajedrez extends Observable {
                                 Jugador jugador = new Jugador(name, "negro");
                                 db.getReference().child("jugadores").child("2").setValue(jugador);
                                 colorJ = Constantes.NEGRO;
-                                fichas();
+                                fichas(1);
                             }
                         }
 
@@ -224,7 +224,7 @@ public class Ajedrez extends Observable {
     }
 
 
-    public void fichas() {
+    public void fichas(int jugador) {
 
         this.turno = Constantes.BLANCO;
         this.matriz = new Ficha[8][8];
@@ -233,33 +233,65 @@ public class Ajedrez extends Observable {
 
         int colorE = colorJ == Constantes.BLANCO ? Constantes.NEGRO : Constantes.BLANCO;
 
-        for (int i = 0; i <= 7; i += 7) {
+        if(jugador==0){
 
-            for (int j = 0; j < 8; j++) {
-                this.matriz[i == 0 ? i + 1 : i - 1][j] = new Peon(new int[]{i == 0 ? i + 1 : i - 1, j}, i == 0 ? colorE : colorJ, this, 'P', i == 0 ? 0 : 1);
-                fichas.add(new int[]{i == 0 ? i + 1 : i - 1, j, i == 0 ? colorE : colorJ, 'P'});
+            for (int i = 0; i <= 7; i += 7) {
+
+                for (int j = 0; j < 8; j++) {
+                    this.matriz[i == 0 ? i + 1 : i - 1][j] = new Peon(new int[]{i == 0 ? i + 1 : i - 1, j}, i == 0 ? colorE : colorJ, this, 'P', i == 0 ? 0 : 1);
+                    fichas.add(new int[]{i == 0 ? i + 1 : i - 1, j, i == 0 ? colorE : colorJ, 'P'});
+                }
+
+                this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 0 ? colorE : colorJ, this, 'T');
+                fichas.add(new int[]{i, 0, i == 0 ? colorE : colorJ, 'T'});
+                this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 0 ? colorE : colorJ, this, 'T');
+                fichas.add(new int[]{i, 7, i == 0 ? colorE : colorJ, 'T'});
+
+                this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 0 ? colorE : colorJ, this, 'C');
+                fichas.add(new int[]{i, 1, i == 0 ? colorE : colorJ, 'C'});
+                this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 0 ? colorE : colorJ, this, 'C');
+                fichas.add(new int[]{i, 6, i == 0 ? colorE : colorJ, 'C'});
+
+                this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 0 ? colorE : colorJ, this, 'A');
+                fichas.add(new int[]{i, 2, i == 0 ? colorE : colorJ, 'A'});
+                this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 0 ? colorE : colorJ, this, 'A');
+                fichas.add(new int[]{i, 5, i == 0 ? colorE : colorJ, 'A'});
+
+                this.matriz[i][4] = new Rey(new int[]{i, 4}, i == 0 ? colorE : colorJ, this, 'R');
+                fichas.add(new int[]{i, 4, i == 0 ? colorE : colorJ, 'R'});
+                this.matriz[i][3] = new Dama(new int[]{i, 3}, i == 0 ? colorE : colorJ, this, 'D');
+                fichas.add(new int[]{i, 3, i == 0 ? colorE : colorJ, 'D'});
             }
+        }else{
+            for (int i = 7; i >= 0; i -= 7) {
 
-            this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 0 ? colorE : colorJ, this, 'T');
-            fichas.add(new int[]{i, 0, i == 0 ? colorE : colorJ, 'T'});
-            this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 0 ? colorE : colorJ, this, 'T');
-            fichas.add(new int[]{i, 7, i == 0 ? colorE : colorJ, 'T'});
+                for (int j = 0; j < 8; j++) {
+                    this.matriz[i == 7 ? i - 1 : i + 1][j] = new Peon(new int[]{i == 7 ? i - 1 : i + 1, j}, i == 7 ? colorE : colorJ, this, 'P', i == 7 ? 0 : 1);
+                    fichas.add(new int[]{i == 7 ? i - 1 : i + 1, j, i == 7 ? colorE : colorJ, 'P'});
+                }
 
-            this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 0 ? colorE : colorJ, this, 'C');
-            fichas.add(new int[]{i, 1, i == 0 ? colorE : colorJ, 'C'});
-            this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 0 ? colorE : colorJ, this, 'C');
-            fichas.add(new int[]{i, 6, i == 0 ? colorE : colorJ, 'C'});
+                this.matriz[i][0] = new Torre(new int[]{i, 0}, i == 7 ? colorE : colorJ, this, 'T');
+                fichas.add(new int[]{i, 0, i == 7 ? colorE : colorJ, 'T'});
+                this.matriz[i][7] = new Torre(new int[]{i, 7}, i == 7 ? colorE : colorJ, this, 'T');
+                fichas.add(new int[]{i, 7, i == 7 ? colorE : colorJ, 'T'});
 
-            this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 0 ? colorE : colorJ, this, 'A');
-            fichas.add(new int[]{i, 2, i == 0 ? colorE : colorJ, 'A'});
-            this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 0 ? colorE : colorJ, this, 'A');
-            fichas.add(new int[]{i, 5, i == 0 ? colorE : colorJ, 'A'});
+                this.matriz[i][1] = new Caballo(new int[]{i, 1}, i == 7 ? colorE : colorJ, this, 'C');
+                fichas.add(new int[]{i, 1, i == 7 ? colorE : colorJ, 'C'});
+                this.matriz[i][6] = new Caballo(new int[]{i, 6}, i == 7 ? colorE : colorJ, this, 'C');
+                fichas.add(new int[]{i, 6, i == 7 ? colorE : colorJ, 'C'});
 
-            this.matriz[i][3] = new Rey(new int[]{i, 3}, i == 0 ? colorE : colorJ, this, 'R');
-            fichas.add(new int[]{i, 3, i == 0 ? colorE : colorJ, 'R'});
-            this.matriz[i][4] = new Dama(new int[]{i, 4}, i == 0 ? colorE : colorJ, this, 'D');
-            fichas.add(new int[]{i, 4, i == 0 ? colorE : colorJ, 'D'});
+                this.matriz[i][2] = new Alfil(new int[]{i, 2}, i == 7 ? colorE : colorJ, this, 'A');
+                fichas.add(new int[]{i, 2, i == 7 ? colorE : colorJ, 'A'});
+                this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 7 ? colorE : colorJ, this, 'A');
+                fichas.add(new int[]{i, 5, i == 7 ? colorE : colorJ, 'A'});
+
+                this.matriz[i][3] = new Rey(new int[]{i, 3}, i == 7 ? colorE : colorJ, this, 'R');
+                fichas.add(new int[]{i, 3, i == 7 ? colorE : colorJ, 'R'});
+                this.matriz[i][4] = new Dama(new int[]{i, 4}, i == 7 ? colorE : colorJ, this, 'D');
+                fichas.add(new int[]{i, 4, i == 7 ? colorE : colorJ, 'D'});
+            }
         }
+
 
 
         ArrayList<Object> elemento = new ArrayList<Object>();

@@ -24,7 +24,7 @@ public class ControladorMatriz {
                 this.mainActivityC.getDibujoMatriz().getTextViewMatriz()[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Toast.makeText(mainActivityC, f+""+c, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mainActivityC, f+""+c, Toast.LENGTH_SHORT).show();
                         evento(f,c);
                     }
                 });

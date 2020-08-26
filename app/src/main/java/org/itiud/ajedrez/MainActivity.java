@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private DibujoMatriz dibujoMatriz;
     private ControladorMatriz controlador;
     private TextView textNamePlayer;
+    private Database db = new Database();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +37,26 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user != null){
-            String name = user.getDisplayName();
-            this.dibujoMatriz = new DibujoMatriz(this);
-            this.controlador = new ControladorMatriz(this, name);
+            final String name = user.getDisplayName();
+
+            db.getReference().child("jugadores").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(!snapshot.exists()){
+                        dibujoMatriz = new DibujoMatriz(MainActivity.this, 0);
+                        controlador = new ControladorMatriz(MainActivity.this, name);
+                    }else{
+                        dibujoMatriz = new DibujoMatriz(MainActivity.this, 1);
+                        controlador = new ControladorMatriz(MainActivity.this, name);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
 
             textNamePlayer.setText(name);
 

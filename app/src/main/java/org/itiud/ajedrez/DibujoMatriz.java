@@ -32,7 +32,8 @@ public class DibujoMatriz implements Observer {
     private int[] fichaMovida = new int[2];
     private int[] jaque = new int[]{-1, -1};
 
-    public DibujoMatriz(final MainActivity mainActivity) {
+    public DibujoMatriz(final MainActivity mainActivity, int orden) {
+
         this.mainActivity = mainActivity;
         this.textViewMatriz = new TextView[8][8];
         this.gridLayoutMatriz = new GridLayout(this.mainActivity);
@@ -52,26 +53,50 @@ public class DibujoMatriz implements Observer {
         int filas = 1;
         int col = 97;
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.textViewMatriz[i][j] = new TextView(this.mainActivity);
-                //this.textViewMatriz[i][j].setText(j == 0 ? (filas++) + "" : "");
-                this.textViewMatriz[i][j].setWidth((int) (width * 0.99 / 10));
-                this.textViewMatriz[i][j].setHeight((int) (height * 0.68 / 10));
-                this.textViewMatriz[i][j].setLayoutParams(params);
+        if(orden == 0){
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    this.textViewMatriz[i][j] = new TextView(this.mainActivity);
+                    //this.textViewMatriz[i][j].setText(i+""+j);
+                    this.textViewMatriz[i][j].setWidth((int) (width * 0.99 / 10));
+                    this.textViewMatriz[i][j].setHeight((int) (height * 0.68 / 10));
+                    this.textViewMatriz[i][j].setLayoutParams(params);
 
-                this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.rgb(245, 222, 179) : Color.rgb(139, 69, 19));
+                    this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.rgb(245, 222, 179) : Color.rgb(139, 69, 19));
 
-                this.gridLayoutMatriz.addView(this.textViewMatriz[i][j]);
-                cont++;
-                if (i == 7) {
-                    //this.textViewMatriz[7][j].setText(this.textViewMatriz[7][j].getText() + Character.toString((char) col++));
+                    this.gridLayoutMatriz.addView(this.textViewMatriz[i][j]);
+                    cont++;
+                    if (i == 7) {
+                        //this.textViewMatriz[7][j].setText(this.textViewMatriz[7][j].getText() + Character.toString((char) col++));
+                    }
                 }
-            }
-            cont--;
+                cont--;
 
+            }
+            this.linearLayoutJuego.addView(this.gridLayoutMatriz);
+        }else{
+            for (int i = 7; i >= 0; i--) {
+                for (int j = 0; j < 8; j++) {
+                    this.textViewMatriz[i][j] = new TextView(this.mainActivity);
+                    //this.textViewMatriz[i][j].setText(i+""+j);
+                    this.textViewMatriz[i][j].setWidth((int) (width * 0.99 / 10));
+                    this.textViewMatriz[i][j].setHeight((int) (height * 0.68 / 10));
+                    this.textViewMatriz[i][j].setLayoutParams(params);
+
+                    this.textViewMatriz[i][j].setBackgroundColor(cont % 2 == 0 ? Color.rgb(245, 222, 179) : Color.rgb(139, 69, 19));
+
+                    this.gridLayoutMatriz.addView(this.textViewMatriz[i][j]);
+                    cont++;
+                    if (i == 7) {
+                        //this.textViewMatriz[7][j].setText(this.textViewMatriz[7][j].getText() + Character.toString((char) col++));
+                    }
+                }
+                cont--;
+
+            }
+            this.linearLayoutJuego.addView(this.gridLayoutMatriz);
         }
-        this.linearLayoutJuego.addView(this.gridLayoutMatriz);
+
     }
 
     public TextView[][] getTextViewMatriz() {
