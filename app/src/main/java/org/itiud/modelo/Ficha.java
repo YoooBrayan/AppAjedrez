@@ -70,7 +70,7 @@ public class Ficha {
                 if(this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] instanceof Rey) {
                     this.matriz.FinJuego();
                 }
-                this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
+                //this.matriz.getMatriz()[this.coordenadas[0]][this.coordenadas[1]] = null;
                 this.setCoordenadas(coordenadas);
                 this.matriz.getMatriz()[coordenadas[0]][coordenadas[1]] = this;
                 return true;
@@ -80,19 +80,6 @@ public class Ficha {
         return false;
     }
 
-    public void moverJugada(int[] coordenadasN) {
-
-        if(this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]] instanceof Rey) {
-            this.matriz.FinJuego();
-        }
-
-        this.setColor(this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]].getColor());
-        this.setLetra(this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]].getLetra());
-        this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]] = null;
-        this.setCoordenadas(coordenadasN);
-        this.matriz.getMatriz()[coordenadasN[2]][coordenadasN[3]] = this;
-
-    }
 
     public int[] getJaque() {
         return jaque;
