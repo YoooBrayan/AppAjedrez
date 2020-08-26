@@ -20,6 +20,9 @@ public class Ficha {
         this.jaque = new int[]{-1, -1};
     }
 
+    public Ficha() {
+    }
+
     public int[] getCoordenadas() {
         return coordenadas;
     }
@@ -75,6 +78,20 @@ public class Ficha {
         }
 
         return false;
+    }
+
+    public void moverJugada(int[] coordenadasN) {
+
+        if(this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]] instanceof Rey) {
+            this.matriz.FinJuego();
+        }
+
+        this.setColor(this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]].getColor());
+        this.setLetra(this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]].getLetra());
+        this.matriz.getMatriz()[coordenadasN[0]][coordenadasN[1]] = null;
+        this.setCoordenadas(coordenadasN);
+        this.matriz.getMatriz()[coordenadasN[2]][coordenadasN[3]] = this;
+
     }
 
     public int[] getJaque() {

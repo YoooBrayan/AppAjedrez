@@ -22,13 +22,13 @@ public class Ajedrez extends Observable {
 
     private Ficha matriz[][];
     private Ficha fichaActual;
+    private Ficha fichaEnemiga;
     private int turno;
     Database db = new Database();
     private int cont = 0;
     private int colorJ;
 
     public void iniciarJuego(final String name) {
-
 
         db.getReference().child("jugadores").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -64,6 +64,8 @@ public class Ajedrez extends Observable {
 
             }
         });
+
+        actualizar(this.matriz);
 
     }
 
@@ -150,9 +152,10 @@ public class Ajedrez extends Observable {
                 //Enviar a firebase aqui
                 //this.fichaActual = null;
 
-                Coordenada coordenada = new Coordenada(this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1]);
-                db.getReference().child("partida").removeValue();
-                db.getReference().child("partida").setValue(coordenada);
+                Coordenada coordenadasE = new Coordenada(coordenadaAnterior[0], coordenadaAnterior[1], this.fichaActual.getCoordenadas()[0], this.fichaActual.getCoordenadas()[1], this.fichaActual.getColor(), Character.toString(fichaActual.getLetra()));
+                db.getReference().child("coordenadas").removeValue();
+                db.getReference().child("coordenadas").setValue(coordenadasE);
+
 
             } else {
                 elemento.add(this.fichaActual.getCoordenadas());
@@ -164,6 +167,25 @@ public class Ajedrez extends Observable {
         elemento.add(this.fichaActual == null ? new ArrayList<int[]>() : this.posicionesEnemigas());
         this.setChanged();
         this.notifyObservers(elemento);
+    }
+
+    private void mover(int filaA, int columnaA, int filaN, int columnaN) {
+        if (this.matriz[filaA][columnaA] instanceof Peon) {
+            System.out.println("peon");
+        } else if (this.matriz[filaA][columnaA] instanceof Caballo) {
+            System.out.println("caballo");
+        } else if (this.matriz[filaA][columnaA] instanceof Torre) {
+            System.out.println("torre");
+        } else if (this.matriz[filaA][columnaA] instanceof Alfil) {
+            System.out.println("alfil");
+        } else if (this.matriz[filaA][columnaA] instanceof Dama) {
+            System.out.println("dama");
+        } else if (this.matriz[filaA][columnaA] instanceof Rey) {
+            System.out.println("rey");
+        } else {
+            System.out.println("nada");
+        }
+
     }
 
     public Ficha getFichaActual() {
@@ -201,45 +223,9 @@ public class Ajedrez extends Observable {
         notifyObservers(elemento);
     }
 
-    public void actualizar() {
-
-        final Timer timer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-
-                cont++;
-                if (cont > 1) {
-                    timer.cancel();
-                    timer.purge();
-                    System.out.println("");
-                    System.out.println("Cancelo");
-                    return;
-                }
-                db.getReference().child("partida").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            int fila = Integer.parseInt(snapshot.child("fila").getValue().toString());
-                            int columna = Integer.parseInt(snapshot.child("columna").getValue().toString());
-                            System.out.println("Fila: " + fila);
-                            System.out.println("Columna: " + columna);
-
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-        };
-        timer.scheduleAtFixedRate(timerTask, 0, 1000);
-
-    }
 
     public void fichas() {
+
         this.turno = Constantes.BLANCO;
         this.matriz = new Ficha[8][8];
 
@@ -282,8 +268,89 @@ public class Ajedrez extends Observable {
         elemento.add(true);
         this.setChanged();
         this.notifyObservers(elemento);
-        actualizar();
     }
 
+    private void inicio(final FirebaseCallback1 firebaseCallback1) {
+
+        final boolean[] b = {false};
+        db.getReference().child("jugadores").child("1").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+
+                    b[0] = true;
+                    firebaseCallback1.onCallback1(b[0]);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private interface FirebaseCallback1 {
+        void onCallback1(Boolean b);
+    }
+
+    public void actualizar(final Ficha[][] fichas) {
+
+        final Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                cont++;
+                if (cont > 1) {
+                    timer.cancel();
+                    timer.purge();
+                    System.out.println("");
+                    System.out.println("Cancelo");
+                    return;
+                }
+                db.getReference().child("coordenadas").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            int filaA = Integer.parseInt(snapshot.child("filaA").getValue().toString());
+                            int columnaA = Integer.parseInt(snapshot.child("columnaA").getValue().toString());
+                            int filaN = Integer.parseInt(snapshot.child("filaN").getValue().toString());
+                            int columnaN = Integer.parseInt(snapshot.child("columnaN").getValue().toString());
+                            int color = Integer.parseInt(snapshot.child("color").getValue().toString());
+                            String letra = snapshot.child("letra").getValue().toString();
+
+
+                            System.out.println("FilaA: " + filaA);
+                            System.out.println("ColumnaA: " + columnaA);
+                            System.out.println("FilaN: " + filaN);
+                            System.out.println("ColumnaN: " + columnaN);
+                            System.out.println("color: " + color);
+                            System.out.println("letra: " + letra);
+
+                            matriz[filaN][columnaN] = new Ficha(new int[]{filaN, columnaA}, color, Ajedrez.this, letra.charAt(0));
+                            matriz[filaA][columnaA] = null;
+
+                            ArrayList<Object> elemento = new ArrayList<Object>();
+                            elemento.add(false);
+                            elemento.add(new int[]{filaN, columnaN, color, matriz[filaN][columnaN].getLetra()});
+                            elemento.add(new int[]{filaA, columnaA});
+                            setChanged();
+                            notifyObservers(elemento);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 1000);
+
+    }
 
 }

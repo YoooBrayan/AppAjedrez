@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         AccessToken.setCurrentAccessToken(null);
+
+        Database db = new Database();
+        db.getReference().child("jugadores").removeValue();
+        db.getReference().child("coordenadas").removeValue();
+
         goLogin();
     }
 }

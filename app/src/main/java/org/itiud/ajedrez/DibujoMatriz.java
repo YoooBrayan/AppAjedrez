@@ -169,7 +169,17 @@ public class DibujoMatriz implements Observer {
             Intent alert = new Intent(this.mainActivity, AlertActivity.class);
             alert.putExtra("ganador", elemento.get(1).toString());
             mainActivity.startActivity(alert);
-        }else if(elemento.get(0).equals(false)){
+        }else if(elemento.get(0).equals(false) && !elemento.get(1).equals(true)){
+
+            int[] ficha = (int[]) elemento.get(1);
+            int[] coordenadaAnterior = (int[]) elemento.get(2);
+            //this.jaque = (int[]) elemento.get(3);
+
+            textViewMatriz[ficha[0]][ficha[1]].setText(Character.toString((char) ficha[3]));
+            textViewMatriz[ficha[0]][ficha[1]].setTextColor(ficha[2]);
+            textViewMatriz[ficha[0]][ficha[1]].setGravity(Gravity.CENTER);
+            textViewMatriz[coordenadaAnterior[0]][coordenadaAnterior[1]].setText("");
+
 
         }
         else{
