@@ -250,7 +250,7 @@ public class Ajedrez extends Observable {
         }else{
             for (int i = 7; i >= 0; i -= 7) {
 
-                for (int j = 0; j < 8; j++) {
+                for (int j = 7; j >= 0; j--) {
                     this.matriz[i == 7 ? i - 1 : i + 1][j] = new Peon(new int[]{i == 7 ? i - 1 : i + 1, j}, i == 7 ? colorE : colorJ, this, 'P', i == 7 ? 1 : 0);
                     fichas.add(new int[]{i == 7 ? i - 1 : i + 1, j, i == 7 ? colorE : colorJ, 'P'});
                 }
@@ -270,10 +270,10 @@ public class Ajedrez extends Observable {
                 this.matriz[i][5] = new Alfil(new int[]{i, 5}, i == 7 ? colorE : colorJ, this, 'A');
                 fichas.add(new int[]{i, 5, i == 7 ? colorE : colorJ, 'A'});
 
-                this.matriz[i][3] = new Dama(new int[]{i, 3}, i == 7 ? colorE : colorJ, this, 'D');
-                fichas.add(new int[]{i, 3, i == 7 ? colorE : colorJ, 'D'});
                 this.matriz[i][4] = new Rey(new int[]{i, 4}, i == 7 ? colorE : colorJ, this, 'R');
                 fichas.add(new int[]{i, 4, i == 7 ? colorE : colorJ, 'R'});
+                this.matriz[i][3] = new Dama(new int[]{i, 3}, i == 7 ? colorE : colorJ, this, 'D');
+                fichas.add(new int[]{i, 3, i == 7 ? colorE : colorJ, 'D'});
             }
         }
 
@@ -309,7 +309,7 @@ public class Ajedrez extends Observable {
                             int color = Integer.parseInt(snapshot.child("color").getValue().toString());
                             String letra = snapshot.child("letra").getValue().toString();
 
-                            System.out.println(matriz[filaA][columnaA]);
+                            //System.out.println(matriz[filaA][columnaA]);
                             matriz[filaA][columnaA].setCoordenadas(new int[]{filaN, columnaN});
 
                             matriz[filaN][columnaN] = matriz[filaA][columnaA];
@@ -321,6 +321,7 @@ public class Ajedrez extends Observable {
                             elemento.add(false);
                             elemento.add(new int[]{filaN, columnaN, color, matriz[filaN][columnaN].getLetra()});
                             elemento.add(new int[]{filaA, columnaA});
+                            elemento.add(matriz[filaN][columnaN].getJaque());
                             setChanged();
                             notifyObservers(elemento);
 

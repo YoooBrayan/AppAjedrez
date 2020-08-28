@@ -36,8 +36,6 @@ public class Torre extends Ficha {
             fila--;
         }
 
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
     public void moverAbajo() {
@@ -60,8 +58,6 @@ public class Torre extends Ficha {
             fila++;
         }
 
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
     public void moverDerecha() {
@@ -83,8 +79,6 @@ public class Torre extends Ficha {
             col++;
         }
 
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
     public void moverIzquierda() {
@@ -106,8 +100,6 @@ public class Torre extends Ficha {
             col--;
         }
 
-        System.out.println("");
-        System.out.println("size: " + this.movimientos.size());
     }
 
 }

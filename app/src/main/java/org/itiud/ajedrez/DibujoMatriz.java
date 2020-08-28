@@ -76,7 +76,7 @@ public class DibujoMatriz implements Observer {
             this.linearLayoutJuego.addView(this.gridLayoutMatriz);
         }else{
             for (int i = 7; i >= 0; i--) {
-                for (int j = 0; j < 8; j++) {
+                for (int j = 7; j >= 0; j--) {
                     this.textViewMatriz[i][j] = new TextView(this.mainActivity);
                     //this.textViewMatriz[i][j].setText(i+""+j);
                     this.textViewMatriz[i][j].setWidth((int) (width * 0.99 / 10));
@@ -183,7 +183,6 @@ public class DibujoMatriz implements Observer {
                 textViewMatriz[coordenadaAnterior[0]][coordenadaAnterior[1]].setText("");
 
                 if (!Arrays.equals(jaque, new int[]{-1, -1})) {
-                    System.out.println("Entro jaque");
                     textViewMatriz[jaque[0]][jaque[1]].setTextColor(Color.RED);
                 }
             } else {
@@ -198,13 +197,16 @@ public class DibujoMatriz implements Observer {
 
             int[] ficha = (int[]) elemento.get(1);
             int[] coordenadaAnterior = (int[]) elemento.get(2);
-            //this.jaque = (int[]) elemento.get(3);
+            this.jaque = (int[]) elemento.get(3);
 
             textViewMatriz[ficha[0]][ficha[1]].setText(Character.toString((char) ficha[3]));
             textViewMatriz[ficha[0]][ficha[1]].setTextColor(ficha[2]);
             textViewMatriz[ficha[0]][ficha[1]].setGravity(Gravity.CENTER);
             textViewMatriz[coordenadaAnterior[0]][coordenadaAnterior[1]].setText("");
 
+            if (!Arrays.equals(jaque, new int[]{-1, -1})) {
+                textViewMatriz[jaque[0]][jaque[1]].setTextColor(Color.RED);
+            }
 
         }
         else{
